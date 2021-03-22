@@ -3,10 +3,15 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import { firebaseConfig } from './firebase.config';
 import { UserContext } from '../../App';
+import { useHistory, useLocation } from 'react-router';
 
 const Login = () => {
     //context api
     const [loggedInUser, setLoggedInUser] = useContext(UserContext)
+    //react router hooks
+    let history = useHistory();
+    let location = useLocation();
+    let { from } = location.state || { from: { pathname: "/" } };
 
 
     // Initialize Firebase
@@ -28,6 +33,7 @@ const Login = () => {
                 const signedInUser = { name: displayName, email: email }
                 // show user
                 setLoggedInUser(signedInUser);
+                history.replace(from); //go back to the page from where you came here
             }).catch((error) => {
                 // Handle Errors here.
                 var errorCode = error.code;
