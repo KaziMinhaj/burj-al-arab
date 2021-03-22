@@ -2,10 +2,19 @@ import React, { useContext } from 'react';
 import firebase from "firebase/app";
 import "firebase/auth";
 import { firebaseConfig } from './firebase.config';
+import { UserContext } from '../../App';
 
 const Login = () => {
+    //context api
+    const [loggedInUser, setLoggedInUser] = useContext(UserContext)
+
+
     // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    } else {
+        firebase.app(); // if already initialized, use that one
+    }
 
     const handleGoogleSignIn = () => {
         //provider
@@ -15,9 +24,10 @@ const Login = () => {
             .signInWithPopup(provider)
             .then((result) => {
                 // The signed-in user info.
-                var user = result.user;
+                var { displayName, email } = result.user;
+                const signedInUser = { name: displayName, email: email }
                 // show user
-                console.log(user);
+                setLoggedInUser(signedInUser);
             }).catch((error) => {
                 // Handle Errors here.
                 var errorCode = error.code;
